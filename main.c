@@ -4,7 +4,7 @@
 #include "structure.h"
 #include "CTS_Layer.h"
 
-#define I2C_SLAVE_ADDR 0x48
+#include "i2caddr.h"
 
 typedef enum i2c_regmap {
     I2C_REGMAP_RAW_CAP = 0x0,
@@ -27,7 +27,7 @@ uint16_t pos = ILLEGAL_SLIDER_WHEEL_POSITION;
 
 void sleep(unsigned int time)
 {
-    for (int i = time * 1000; i > 0; --i) __no_operation();
+    for (int i = time * 100; i > 0; --i) __no_operation();
 }
 
 void config_i2c_slave(unsigned char addr)
@@ -65,7 +65,7 @@ void main(void)
     DCOCTL = CALDCO_16MHZ;
 
     BCSCTL1 |= DIVA_0;                    // ACLK/1 [ACLK/(0:1,1:2,2:4,3:8)]
-    BCSCTL2 |= DIVS_0;                    // SMCLK/8 [SMCLK/(0:1,1:2,2:4,3:8)]
+    BCSCTL2 |= DIVS_3;                    // SMCLK/8 [SMCLK/(0:1,1:2,2:4,3:8)]
     BCSCTL3 |= LFXT1S_2;                  // LFXT1 = VLO Clock Source
 
     P1OUT = 0x00;                         // Drive all Port 1 pins low
@@ -79,22 +79,22 @@ void main(void)
     // Initialize Baseline measurement
     TI_CAPT_Init_Baseline(&plane);
     // Update baseline measurement (Average 5 measurements)
-    TI_CAPT_Update_Baseline(&plane, 15);
+    TI_CAPT_Update_Baseline(&plane, 10);
 
     // Initialize Baseline measurement
-    TI_CAPT_Init_Baseline(&wheel);
+//    TI_CAPT_Init_Baseline(&wheel);
     // Update baseline measurement (Average 5 measurements)
-    TI_CAPT_Update_Baseline(&wheel, 5);
+//    TI_CAPT_Update_Baseline(&wheel, 5);
 
     // Initialize Baseline measurement
-    TI_CAPT_Init_Baseline(&horisontal_slider);
+//    TI_CAPT_Init_Baseline(&horisontal_slider);
     // Update baseline measurement (Average 5 measurements)
-    TI_CAPT_Update_Baseline(&horisontal_slider, 5);
+//    TI_CAPT_Update_Baseline(&horisontal_slider, 5);
 
     // Initialize Baseline measurement
-    TI_CAPT_Init_Baseline(&vertical_slider);
+//    TI_CAPT_Init_Baseline(&vertical_slider);
     // Update baseline measurement (Average 5 measurements)
-    TI_CAPT_Update_Baseline(&vertical_slider, 5);
+//    TI_CAPT_Update_Baseline(&vertical_slider, 5);
 
     memcpy((uint16_t *)(i2c_regmap + 0xa0), baseCnt, TOTAL_NUMBER_OF_ELEMENTS * sizeof(*baseCnt));
 
@@ -107,7 +107,7 @@ void main(void)
         TI_CAPT_Custom(&plane, plane_val);
         memcpy((uint16_t *)(i2c_regmap + 0x20), plane_val, 9 * sizeof(*plane_val));
         __no_operation(); // Set breakpoint here
-
+/*
         pos = TI_CAPT_Wheel(&wheel);
         if (pos != ILLEGAL_SLIDER_WHEEL_POSITION)
             set_i2c_reg(I2C_REGMAP_WHEEL_POS, pos);
@@ -119,8 +119,8 @@ void main(void)
         pos = TI_CAPT_Slider(&vertical_slider);
         if (pos != ILLEGAL_SLIDER_WHEEL_POSITION)
             set_i2c_reg(I2C_REGMAP_VERTICAL_SLIDER_POS, pos);
-
-        sleep(1);
+*/
+        //sleep(1);
     }
 }
 
