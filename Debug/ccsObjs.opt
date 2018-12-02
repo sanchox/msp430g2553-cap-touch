@@ -1,1 +1,0 @@
-"./main.obj" "./structure.obj" "./Library/CTS_HAL.obj" "./Library/CTS_Layer.obj" "../lnk_msp430g2553.cmd" -llibc.a -l"/home/sanchox/ti/workspace_v7/MyTouch/Debug/structure.obj" 
